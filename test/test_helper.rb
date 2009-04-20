@@ -10,6 +10,7 @@ require 'active_record'
 
 require 'active_record/fixtures'
 
+require 'attributes_with_choices'
 require File.dirname(__FILE__) + '/../init.rb'
 
 config = YAML::load(IO.read(File.dirname(__FILE__) + '/database.yml'))

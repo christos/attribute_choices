@@ -23,7 +23,11 @@ module FortyTwo
             format = opts.first
             choices =  self.class.const_get(:"#{attribute.to_s.upcase}_CHOICES")
             return read_attribute(attribute) if format.blank? || choices.blank?
-            choices[read_attribute(attribute)] if format == :display
+            if choices.is_a?(Array)
+              choices.detect {|i| i.first == read_attribute(attribute) }.last
+            elsif choices.is_a?(Hash)
+              choices[read_attribute(attribute)]
+            end
           end
         end
         
