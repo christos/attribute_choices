@@ -26,9 +26,11 @@ module AttributeChoices
           choices[read_attribute(attribute)]
         end
       end
-
-      define_method("#{attribute.to_s}_choices") do
-        choices
+      
+      self.class.instance_eval do
+        define_method("#{attribute.to_s}_choices") do
+          choices
+        end
       end
 
       unless included_modules.include? InstanceMethods
