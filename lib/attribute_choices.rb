@@ -29,7 +29,7 @@ module AttributeChoices
       
       self.class.instance_eval do
         define_method("#{attribute.to_s}_choices") do
-          choices
+          choices.collect(&:reverse)
         end
       end
 
