@@ -19,7 +19,8 @@ module AttributeChoices
       
       if choices.is_a?(Array)
         define_method("#{attribute.to_s}_display") do
-          choices.detect {|i| i.first == read_attribute(attribute) }.last
+          tupple = choices.detect {|i| i.first == read_attribute(attribute) }
+          tupple && tupple.last
         end
       elsif choices.is_a?(Hash)
         define_method("#{attribute.to_s}_display") do

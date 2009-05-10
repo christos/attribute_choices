@@ -4,13 +4,16 @@ require 'test_helper'
 class AttributeChoicesTest < ActiveSupport::TestCase
 
   class Profile < ActiveRecord::Base
-    GENDER_CHOICES = {'m' => 'Man', 'f' => 'Woman'}
-    attribute_choices :gender, GENDER_CHOICES
+    attribute_choices :gender, {'m' => 'Man', 'f' => 'Woman'}
   end
   
   class ChildProfile < Profile
-    GENDER_CHOICES = {'m' => 'Man', 'f' => 'Woman', 'o' => 'Other'}
-    attribute_choices :gender , GENDER_CHOICES
+    attribute_choices :gender , {'m' => 'Man', 'f' => 'Woman', 'o' => 'Other'}
+    attribute_choices :salutation, [
+      ["mr", 'Mister'],
+      ["mrs", 'Misses'],
+      ["ms", 'Miss'],
+    ]
   end
     
     
@@ -19,11 +22,11 @@ class AttributeChoicesTest < ActiveSupport::TestCase
   end
   
   test "An child AR object should not share the parent's chocies" do
-    @parent = Profile.new(:gender => 'm')
-    @parent2 = Profile.new(:gender => 'f')
-    @child = ChildProfile.new(:gender => 'o')
-    puts @parent.gender_display
-    puts @parent2.gender_display
-    puts @child.gender_display
+    assert_not_equal ChildProfile.gender_choices, Profile.gender_choices
+  end
+  
+  test "It should return nil as the display value for an attribute that isn't mapped" do
+    @profile = ChildProfile.new(:salutation => 'master')
+    assert_nil @profile.salutation_display
   end
 end
