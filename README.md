@@ -3,7 +3,7 @@ AttributeChoices
 
 A plugin to help you map your database enumerations to human readable form.
 
-Given an attribute with discreet values in the database, you can provide a mapping to the model for those discreet values to a human readable strings.
+Given an ActiveRecord model with an attribute that has some discreet values in the database, AttributeChoices provides convenient methods to access the display values for that attribute. 
 
 Example
 =======
@@ -16,15 +16,16 @@ Example
       ]
     end
 
-    >> user = User.new :gender => 'f', :age_group => '18-24'
-    >> user.gender
-    => 'f'
-    >> user.gender_display
+    >> @john = User.new :gender => 'm', :age_group => '18-24', :name => 'John'
+    >> @john.gender
+    => 'm'
+    >> @john.gender_display
     => 'Male'
-    >> user.age_group_display
+    >> @john.age_group_display
     => '18 to 24 years old'
-    >> user.gender_choices
-    => { 'm' => "Male", 'f' => 'Female'}
+    >> User.gender_choices
+    => [["Male", 'm'], ['Female', 'f']]
+    => [['18-24', '18 to 24 years old], ['25-45', '25 to 45 years old']]
     
 ToDo
 ====
@@ -34,4 +35,4 @@ ToDo
 * Validate absence of _display and _choices methods
 * Consider the usefulness of _choices= method
 
-Copyright (c) 2009 [Christos Zisopoulos], released under the MIT license
+Copyright (c) 2009 Christos Zisopoulos, released under the MIT license
