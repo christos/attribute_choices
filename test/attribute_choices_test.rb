@@ -22,11 +22,11 @@ class AttributeChoicesTest < ActiveSupport::TestCase
     assert_respond_to(Profile, :attribute_choices)
   end
 
-  test "An child AR object should not share the parent's chocies" do
+  test "An child AR object should not share the parent's choices" do
     assert_not_equal ChildProfile.gender_choices, Profile.gender_choices
   end
 
-  test "It should return nil as the display value for an attribute that isn't mapped" do
+  test "nil is returned as the display value of an attribute without a value to display mapping" do
     @profile = ChildProfile.new(:salutation => 'master')
     assert_nil @profile.salutation_display
   end
