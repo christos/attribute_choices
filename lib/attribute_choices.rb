@@ -17,20 +17,24 @@ module AttributeChoices
       # define the class and instance methods
       # the first time.
       
+      write_inheritable_hash :attribute_choices_storage, {}
+      class_inheritable_reader :attribute_choices_storage
+      attribute_choices_storage[attribute.to_sym] = choices
+      
       if choices.is_a?(Array)
         define_method("#{attribute.to_s}_display") do
-          tupple = choices.detect {|i| i.first == read_attribute(attribute) }
+          tupple = attribute_choices_storage[attribute].detect {|i| i.first == read_attribute(attribute) }
           tupple && tupple.last
         end
       elsif choices.is_a?(Hash)
         define_method("#{attribute.to_s}_display") do
-          choices[read_attribute(attribute)]
+          attribute_choices_storage[attribute][read_attribute(attribute)]
         end
       end
       
       self.class.instance_eval do
         define_method("#{attribute.to_s}_choices") do
-          choices.collect(&:reverse)
+          attribute_choices_storage[attribute].collect(&:reverse)
         end
       end
 
