@@ -1,14 +1,14 @@
-AttributeChoices
-================
+= AttributeChoices
 
-A plugin to help you map your database enumerations to human readable form.
+AttributeChoices is a plugin that simplifies the common pattern of mapping the discreet values of an ActiveRecord model attribute, to human readable display values.
 
-Given an ActiveRecord model with an attribute that has some discreet values in the database, AttributeChoices provides convenient methods to access the display values for that attribute. 
+= Installation
 
-Example
-=======
+  script/plugin install git://github.com/christos/attribute_choices.git
 
-First define your model:
+= Usage
+
+Define your model:
 
     class User < ActiveRecord::Base
       attribute_choices :gender,  { 'm' => "Male", 'f' => 'Female'}
@@ -25,20 +25,21 @@ Then try this in the console:
     => 'm'
     >> @john.gender_display
     => 'Male'
+ 
     >> @john.age_group_display
     => '18 to 24 years old'
     >> User.gender_choices
     => [["Male", 'm'], ['Female', 'f']]
+    >> User.age_group_choices
     => [['18-24', '18 to 24 years old], ['25-45', '25 to 45 years old']]
     
 ToDo
 ====
-
-* Write basic tests
-* Gem?
+* Add :validate => true option to use validates_inclusion_of on the values
 * Make it work with any Class with attributes, not just AR::Base?
 * Validate presence of attribute before defining methods
 * Validate absence of _display and _choices methods
 * Consider the usefulness of _choices= method
+
 
 Copyright (c) 2009 Christos Zisopoulos, released under the MIT license

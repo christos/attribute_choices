@@ -1,26 +1,44 @@
-# Lazy loading version.  Use for behaviour that applies
-# only to specified models.
+
 module AttributeChoices
-  # Lazy loading.
-  def self.included(base)
-    base.extend ActMethods
+  def self.included(base) #:nodoc:
+    base.extend(AttributeChoicesMacro)
   end
-  module ActMethods
-    # We only pull in the class and instance methods
-    # if acts_as_fooey is called. This is lazy,
-    # or on-demand, initialisation.
+
+  module AttributeChoicesMacro
+
+    # Associate a list of display values for an attribute with a list of discreet values
+    #
+    # Options are:
+    #
+    # * +attribute+ - The attribute whose values you want to map to display values
+    # * +choices+ - Either an +Array+ of tupples where the first value of the tupple is the attribute \
+    # value and the second one is the display value mapping, or a +Hash+ where the key is the \
+    # attribute value and the value is the display value mapping.
+    #
+    # For example:
+    #   class User < ActiveRecord::Base
+    #     attribute_choices :gender,  { 'm' => "Male", 'f' => 'Female'}
+    #     attribute_choices :age_group,  [
+    #       ['18-24', '18 to 24 years old], 
+    #       ['25-45', '25 to 45 years old']
+    #     ]
+    #   end
+    #
+    # The macro adds an instance method named after the attribute, suffixed with <tt>_display</tt>
+    # (e.g. <tt>gender_display</tt> for <tt>:gender</tt>) that returns the display value of the
+    # attribute for a given value, or <tt>nil</tt> if a mapping for a value is missing.
+    # 
+    # It also adds a class method named after the attribute, suffixed with <tt>_choices</tt>
+    # (e.g. <tt>User.gender_display</tt> for <tt>:gender</tt>) that returns an array of choices and values
+    # in a fomrat that is suitable for passing directly to the Rails <tt>select_*</tt> helpers.
+    #
+    # NOTE: If you use a Hash for the choices the <tt>*_choices</tt> method returns an Array of tupples
+    # which is ordered randomly
     def attribute_choices(attribute, choices)
-      # We only need to define the class and
-      # instance methods once on a class.
-      # If, for example, a class has multiple
-      # acts_as_fooey declarations, we only want to
-      # define the class and instance methods
-      # the first time.
-      
       write_inheritable_hash :attribute_choices_storage, {}
       class_inheritable_reader :attribute_choices_storage
       attribute_choices_storage[attribute.to_sym] = choices
-      
+
       if choices.is_a?(Array)
         define_method("#{attribute.to_s}_display") do
           tupple = attribute_choices_storage[attribute].detect {|i| i.first == read_attribute(attribute) }
@@ -31,7 +49,7 @@ module AttributeChoices
           attribute_choices_storage[attribute][read_attribute(attribute)]
         end
       end
-      
+
       self.class.instance_eval do
         define_method("#{attribute.to_s}_choices") do
           attribute_choices_storage[attribute].collect(&:reverse)
