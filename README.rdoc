@@ -35,6 +35,7 @@ Then try this in the console:
     
 = ToDo
 
+* I18n for attribute_display and attribute_choices
 * Add :validate => true option to use validates_inclusion_of on the values
 * Make it work with any Class with attributes, not just AR::Base?
 * Validate presence of attribute before defining methods
