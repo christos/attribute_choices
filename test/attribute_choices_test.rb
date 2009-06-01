@@ -39,5 +39,23 @@ class AttributeChoicesTest < ActiveSupport::TestCase
     end
     assert_equal Profile.gender_choices, [['Señor', 'mr'], ['Señora', 'mrs']]
   end
-
+  
+  test "It should store an options Hash if passed as the the optional third parameter" do
+      class Profile < ActiveRecord::Base
+        attribute_choices :gender, [["mr", 'Señor'], ["mrs", 'Señora']], :localized => true, :validate => false
+        attribute_choices :hair, [["b", 'Blonde'], ["r", 'Red']], :localized => true, :validate => true
+      end
+      assert_equal Profile.attribute_choices_options[:gender], {:localized => true, :validate => false}
+      assert_equal Profile.attribute_choices_options[:hair], {:localized => true, :validate => true}
+  end
+  
+  test "Default values are assigned for any options that are not specified" do
+      class Profile < ActiveRecord::Base
+        attribute_choices :gender, [["mr", 'Señor'], ["mrs", 'Señora']], :localized => true
+        attribute_choices :hair, [["b", 'Blonde'], ["r", 'Red']]
+      end
+      
+      assert_equal Profile.attribute_choices_options[:gender], {:localized => true, :validate => false}
+      assert_equal Profile.attribute_choices_options[:hair],   {:localized => false, :validate => false}
+  end
 end

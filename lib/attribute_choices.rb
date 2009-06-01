@@ -8,12 +8,15 @@ module AttributeChoices
 
     # Associate a list of display values for an attribute with a list of discreet values
     #
-    # Options are:
+    # The arguments are:
     #
     # * +attribute+ - The attribute whose values you want to map to display values
     # * +choices+ - Either an +Array+ of tupples where the first value of the tupple is the attribute \
     # value and the second one is the display value mapping, or a +Hash+ where the key is the \
     # attribute value and the value is the display value mapping.
+    # * +options+ - An optional hash of options:
+    #   * +:localized+ - not implemented yet
+    #   * +:validate+ - not implemented yet
     #
     # For example:
     #   class User < ActiveRecord::Base
@@ -21,7 +24,7 @@ module AttributeChoices
     #     attribute_choices :age_group,  [
     #       ['18-24', '18 to 24 years old], 
     #       ['25-45', '25 to 45 years old']
-    #     ]
+    #     ], :localized => true, :validate => false
     #   end
     #
     # The macro adds an instance method named after the attribute, suffixed with <tt>_display</tt>
@@ -34,10 +37,18 @@ module AttributeChoices
     #
     # NOTE: If you use a Hash for the choices the <tt>*_choices</tt> method returns an Array of tupples
     # which is ordered randomly
-    def attribute_choices(attribute, choices)
+    def attribute_choices(attribute, choices, *args)
       write_inheritable_hash :attribute_choices_storage, {}
       class_inheritable_reader :attribute_choices_storage
+
+      write_inheritable_hash :attribute_choices_options,  {}
+      class_inheritable_reader :attribute_choices_options
+
       attribute_choices_storage[attribute.to_sym] = choices
+
+      options = args.extract_options!
+      options.reverse_merge!(:validate => false, :localized => false)
+      attribute_choices_options[attribute.to_sym] = options
 
       if choices.is_a?(Array)
         define_method("#{attribute.to_s}_display") do
