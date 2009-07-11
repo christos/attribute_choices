@@ -24,6 +24,22 @@ class AttributeChoicesTest < ActiveSupport::TestCase
     assert_not_equal Adult.gender_choices, Person.gender_choices
   end
 
+  test "Does not allow specifying non-existent attributes" do
+    assert_raise ArgumentError do
+      class Person < ActiveRecord::Base
+        attribute_choices :non_existent_attribute, []
+      end
+    end
+  end
+
+  test "Does not allow invalid option keys" do
+    assert_raise ArgumentError do
+      class Person < ActiveRecord::Base
+        attribute_choices :gender, {'m' => 'Male', 'f' => 'Female'}, :not_a_real_option => true
+      end
+    end
+  end
+
   test "nil is returned as the display value of an attribute without a value to display mapping" do
     @adult = Adult.new(:salutation => 'master')
     assert_nil @adult.salutation_display

@@ -75,7 +75,7 @@ module AttributeChoices
     private
     def assert_valid_attribute(attr_name)
       unless column_names.include?(attr_name.to_s)
-        raise ActiveRecord::MissingAttributeError, "Model attribute '#{attr_name.to_s}' doesn't exist" 
+        raise ArgumentError, "Model attribute '#{attr_name.to_s}' doesn't exist" 
       end
     end
   end
