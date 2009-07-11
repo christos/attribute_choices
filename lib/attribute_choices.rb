@@ -56,7 +56,7 @@ module AttributeChoices
       attribute_choices_options[attribute.to_sym] = options
 
       define_method("#{attribute.to_s}_display") do
-        tupple = attribute_choices_storage[attribute].detect {|i| i.first == read_attribute(attribute) }
+        tupple = attribute_choices_storage[attribute].assoc(read_attribute(attribute))
         tupple && tupple.last
       end
 
