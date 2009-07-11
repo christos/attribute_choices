@@ -25,7 +25,7 @@ Then try this in the console:
     => 'm'
     >> @john.gender_display
     => 'Male'
-`    >> User.gender_choices
+    >> User.gender_choices
     => [["Male", 'm'], ['Female', 'f']]
 
     >> @john.valid?
