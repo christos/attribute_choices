@@ -56,22 +56,22 @@ class AttributeChoicesTest < ActiveSupport::TestCase
 
   end
 
-  test "Multiple calls to attribute_choices update the attribute choices" do      
+  test "Multiple calls to attribute_choices update the attribute choices" do
     class Medic < Adult; end
-    assert_equal Medic.salutation_choices, [['Mister', 'mr'], ['Misses', 'mrs'], ["Miss", 'ms']]
+    assert_equal [['Mister', 'mr'], ['Misses', 'mrs'], ["Miss", 'ms']], Medic.salutation_choices
 
     class Medic < Adult
       attribute_choices :salutation, [ ["dr", 'Doctor'] ]
     end
 
-    assert_equal Medic.salutation_choices, [ ['Doctor', 'dr'] ]
+    assert_equal [ ['Doctor', 'dr'] ], Medic.salutation_choices
   end
 
   test "It should store an options Hash if passed as the the optional third parameter" do
     class Person < ActiveRecord::Base
       attribute_choices :gender, {'m' => 'Male', 'f' => 'Female'}, :localize => true, :validate => false
     end
-    assert_equal Person.attribute_choices_options[:gender], {:localize => true, :validate => false}
+    assert_equal Hash[:localize, true, :validate, false], Person.attribute_choices_options[:gender]
   end
 
   test "Default values are assigned for any options that are not specified" do
@@ -79,7 +79,7 @@ class AttributeChoicesTest < ActiveSupport::TestCase
       attribute_choices :gender, {'m' => 'Male', 'f' => 'Female'}, :localize => true
     end
 
-    assert_equal Person.attribute_choices_options[:gender], {:localize => true, :validate => false}
+    assert_equal Hash[:localize, true, :validate, false], Person.attribute_choices_options[:gender]
   end
 
   test "Doesn't validate inclusion of attribute value in choices values by default" do
