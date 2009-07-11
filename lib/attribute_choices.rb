@@ -14,9 +14,10 @@ module AttributeChoices
     # * +choices+ - Either an +Array+ of tupples where the first value of the tupple is the attribute \
     # value and the second one is the display value mapping, or a +Hash+ where the key is the \
     # attribute value and the value is the display value mapping.
-    # * +options+ - An optional hash of options:
-    #   * +:localize+ - not implemented yet
-    #   * +:validate+ - not implemented yet
+    # * <tt>options</tt> - An optional hash of options:
+    #   * <tt>:localize</tt> - <em>not implemented yet</em>
+    #   * <tt>:validate</tt> - If set to +true+, +validates_presence_of+ is used to ensure that the attribute \
+    #                   only accepts the values passed in with the +choices+
     #
     # For example:
     #   class User < ActiveRecord::Base
@@ -32,11 +33,11 @@ module AttributeChoices
     # attribute for a given value, or <tt>nil</tt> if a mapping for a value is missing.
     # 
     # It also adds a class method named after the attribute, suffixed with <tt>_choices</tt>
-    # (e.g. <tt>User.gender_display</tt> for <tt>:gender</tt>) that returns an array of choices and values
+    # (e.g. <tt>User.gender_choices</tt> for <tt>:gender</tt>) that returns an array of choices and values
     # in a fomrat that is suitable for passing directly to the Rails <tt>select_*</tt> helpers.
     #
-    # NOTE: If you use a Hash for the choices the <tt>*_choices</tt> method returns an Array of tupples
-    # which is ordered randomly
+    # NOTE: You can use a Hash for the +choices+ argument which is converted to an Array. The order of the \
+    # tupples of the resulting Array is only guaranteed to be preserved if you are using Ruby 1.9
     def attribute_choices(attribute, choices, *args)
 
       assert_valid_attribute(attribute.to_s)

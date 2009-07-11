@@ -1,6 +1,6 @@
 = AttributeChoices
 
-AttributeChoices is a plugin that simplifies the common pattern of mapping the discreet values of an ActiveRecord model attribute, to human readable display values.
+AttributeChoices is a plugin that simplifies the common pattern of mapping a set of discreet values for an ActiveRecord model attribute, to a set of display values for human consumption.
 
 = Installation
 
@@ -11,7 +11,7 @@ AttributeChoices is a plugin that simplifies the common pattern of mapping the d
 Define your model:
 
     class User < ActiveRecord::Base
-      attribute_choices :gender,  { 'm' => "Male", 'f' => 'Female'}
+      attribute_choices :gender,  { 'm' => "Male", 'f' => 'Female'}, :validate => true
       attribute_choices :age_group,  [
         ['18-24', '18 to 24 years old], 
         ['25-45', '25 to 45 years old']
@@ -25,6 +25,12 @@ Then try this in the console:
     => 'm'
     >> @john.gender_display
     => 'Male'
+    
+    >> @john.valid?
+    => true
+    >> @john.gender = 'o'
+    >> @john.valid?
+    => false
  
     >> @john.age_group_display
     => '18 to 24 years old'
@@ -36,9 +42,6 @@ Then try this in the console:
 = ToDo
 
 * I18n for attribute_display and attribute_choices
-* Add :validate => true option to use validates_inclusion_of on the values
-* Make it work with any Class with attributes, not just AR::Base?
-* Validate presence of attribute before defining methods
 * Validate absence of _display and _choices methods
 * Consider the usefulness of _choices= method
 
