@@ -55,4 +55,21 @@ class AttributeChoicesTest < ActiveSupport::TestCase
     assert_equal Person.attribute_choices_options[:gender], {:localized => true, :validate => false}
   end
 
+  test "Doesn't validate inclusion of attribute value in choices values by default" do
+    @person = Person.new(:gender => 'trans', :salutation => 'mr')
+    assert @person.valid?
+  end
+
+  test "Validates inclusion of attribute value in choices values when :localized => true" do
+    class Person < ActiveRecord::Base
+      attribute_choices :gender, {'m' => 'Male', 'f' => 'Female'}, :validate => true
+    end
+
+    @person = Person.new(:gender => 'm', :salutation => 'mr')
+    assert @person.valid?
+
+    @person.gender = 'trans'
+    assert !@person.valid?
+  end
+
 end

@@ -67,6 +67,10 @@ module AttributeChoices
         end
       end
 
+      if column_names.include?(attribute.to_s) && options[:validate]
+        validates_inclusion_of attribute.to_sym, :in => choices.collect {|i| i.first}
+      end
+
       unless included_modules.include? InstanceMethods
         extend ClassMethods
         include InstanceMethods
