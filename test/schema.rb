@@ -11,12 +11,10 @@
 
 ActiveRecord::Schema.define(:version => 20090418155608) do
 
-  create_table "profiles", :force => true do |t|
+  create_table "people", :force => true do |t|
     t.string   "salutation"
     t.string   "name"
     t.string   "gender"
-    t.string   "email"
-    t.integer  "age_group"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
