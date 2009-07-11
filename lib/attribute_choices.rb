@@ -15,7 +15,7 @@ module AttributeChoices
     # value and the second one is the display value mapping, or a +Hash+ where the key is the \
     # attribute value and the value is the display value mapping.
     # * +options+ - An optional hash of options:
-    #   * +:localized+ - not implemented yet
+    #   * +:localize+ - not implemented yet
     #   * +:validate+ - not implemented yet
     #
     # For example:
@@ -24,7 +24,7 @@ module AttributeChoices
     #     attribute_choices :age_group,  [
     #       ['18-24', '18 to 24 years old], 
     #       ['25-45', '25 to 45 years old']
-    #     ], :localized => true, :validate => false
+    #     ], :localize => true, :validate => false
     #   end
     #
     # The macro adds an instance method named after the attribute, suffixed with <tt>_display</tt>
@@ -38,27 +38,26 @@ module AttributeChoices
     # NOTE: If you use a Hash for the choices the <tt>*_choices</tt> method returns an Array of tupples
     # which is ordered randomly
     def attribute_choices(attribute, choices, *args)
+
+      assert_valid_attribute(attribute.to_s)
+
       write_inheritable_hash :attribute_choices_storage, {}
       class_inheritable_reader :attribute_choices_storage
 
       write_inheritable_hash :attribute_choices_options,  {}
       class_inheritable_reader :attribute_choices_options
 
-      attribute_choices_storage[attribute.to_sym] = choices
+      attribute = attribute.to_sym
+      attribute_choices_storage[attribute] = choices.to_a
 
       options = args.extract_options!
-      options.reverse_merge!(:validate => false, :localized => false)
+      options.reverse_merge!(:validate => false, :localize => false)
+      options.assert_valid_keys(:validate, :localize)
       attribute_choices_options[attribute.to_sym] = options
 
-      if choices.is_a?(Array)
-        define_method("#{attribute.to_s}_display") do
-          tupple = attribute_choices_storage[attribute].detect {|i| i.first == read_attribute(attribute) }
-          tupple && tupple.last
-        end
-      elsif choices.is_a?(Hash)
-        define_method("#{attribute.to_s}_display") do
-          attribute_choices_storage[attribute][read_attribute(attribute)]
-        end
+      define_method("#{attribute.to_s}_display") do
+        tupple = attribute_choices_storage[attribute].detect {|i| i.first == read_attribute(attribute) }
+        tupple && tupple.last
       end
 
       self.class.instance_eval do
@@ -68,17 +67,16 @@ module AttributeChoices
       end
 
       if column_names.include?(attribute.to_s) && options[:validate]
-        validates_inclusion_of attribute.to_sym, :in => choices.collect {|i| i.first}
+        validates_inclusion_of attribute.to_sym, :in => attribute_choices_storage[attribute].collect {|i| i.first}
       end
 
-      unless included_modules.include? InstanceMethods
-        extend ClassMethods
-        include InstanceMethods
+    end
+
+    private
+    def assert_valid_attribute(attr_name)
+      unless column_names.include?(attr_name.to_s)
+        raise ActiveRecord::MissingAttributeError, "Model attribute '#{attr_name.to_s}' doesn't exist" 
       end
     end
-  end
-  module ClassMethods
-  end
-  module InstanceMethods
   end
 end

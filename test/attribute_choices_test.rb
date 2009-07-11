@@ -25,8 +25,12 @@ class AttributeChoicesTest < ActiveSupport::TestCase
   end
 
   test "nil is returned as the display value of an attribute without a value to display mapping" do
-    @profile = Adult.new(:salutation => 'master')
-    assert_nil @profile.salutation_display
+    @adult = Adult.new(:salutation => 'master')
+    assert_nil @adult.salutation_display
+
+    @adult.gender = 'unknown'
+    assert_nil @adult.gender_display
+
   end
 
   test "Multiple calls to attribute_choices update the attribute choices" do      
@@ -42,17 +46,17 @@ class AttributeChoicesTest < ActiveSupport::TestCase
 
   test "It should store an options Hash if passed as the the optional third parameter" do
     class Person < ActiveRecord::Base
-      attribute_choices :gender, {'m' => 'Male', 'f' => 'Female'}, :localized => true, :validate => false
+      attribute_choices :gender, {'m' => 'Male', 'f' => 'Female'}, :localize => true, :validate => false
     end
-    assert_equal Person.attribute_choices_options[:gender], {:localized => true, :validate => false}
+    assert_equal Person.attribute_choices_options[:gender], {:localize => true, :validate => false}
   end
 
   test "Default values are assigned for any options that are not specified" do
     class Person < ActiveRecord::Base
-      attribute_choices :gender, {'m' => 'Male', 'f' => 'Female'}, :localized => true
+      attribute_choices :gender, {'m' => 'Male', 'f' => 'Female'}, :localize => true
     end
 
-    assert_equal Person.attribute_choices_options[:gender], {:localized => true, :validate => false}
+    assert_equal Person.attribute_choices_options[:gender], {:localize => true, :validate => false}
   end
 
   test "Doesn't validate inclusion of attribute value in choices values by default" do
@@ -60,7 +64,7 @@ class AttributeChoicesTest < ActiveSupport::TestCase
     assert @person.valid?
   end
 
-  test "Validates inclusion of attribute value in choices values when :localized => true" do
+  test "Validates inclusion of attribute value in choices values when :localize => true" do
     class Person < ActiveRecord::Base
       attribute_choices :gender, {'m' => 'Male', 'f' => 'Female'}, :validate => true
     end
