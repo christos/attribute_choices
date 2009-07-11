@@ -40,6 +40,13 @@ class AttributeChoicesTest < ActiveSupport::TestCase
     end
   end
 
+  test "given a valid value for an attribute the correct display value is returned " do
+    @person = Person.new(:gender => 'm', :salutation => 'mr')
+    assert @person.valid?
+
+    assert_equal 'Male', @person.gender_display
+  end
+
   test "nil is returned as the display value of an attribute without a value to display mapping" do
     @adult = Adult.new(:salutation => 'master')
     assert_nil @adult.salutation_display
