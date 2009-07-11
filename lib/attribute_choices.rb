@@ -12,12 +12,14 @@ module AttributeChoices
     #
     # * +attribute+ - The attribute whose values you want to map to display values
     # * +choices+ - Either an +Array+ of tupples where the first value of the tupple is the attribute \
-    # value and the second one is the display value mapping, or a +Hash+ where the key is the \
-    # attribute value and the value is the display value mapping.
+    #               value and the second one is the display value mapping, or a +Hash+ where the key is the \
+    #               attribute value and the value is the display value mapping.
     # * <tt>options</tt> - An optional hash of options:
-    #   * <tt>:localize</tt> - <em>not implemented yet</em>
+    #   * <tt>:localize</tt> - If set to +true+, then <tt>I18n.trasnlate</tt> is used to translate the value \
+    #                          returned by the +_display+ instance methods as well as translate the display \
+    #                          values returned by the +_choices+ class method
     #   * <tt>:validate</tt> - If set to +true+, +validates_presence_of+ is used to ensure that the attribute \
-    #                   only accepts the values passed in with the +choices+
+    #                          only accepts the values passed in with the +choices+
     #
     # For example:
     #   class User < ActiveRecord::Base
@@ -49,12 +51,17 @@ module AttributeChoices
       class_inheritable_reader :attribute_choices_options
 
       attribute = attribute.to_sym
-      attribute_choices_storage[attribute] = choices.to_a
 
       options = args.extract_options!
       options.reverse_merge!(:validate => false, :localize => false)
       options.assert_valid_keys(:validate, :localize)
       attribute_choices_options[attribute.to_sym] = options
+
+      if options[:localize]
+        attribute_choices_storage[attribute] = choices.to_a.collect {|t| [t.first, I18n.translate(t.last)]}
+      else
+        attribute_choices_storage[attribute] = choices.to_a
+      end
 
       define_method("#{attribute.to_s}_display") do
         tupple = attribute_choices_storage[attribute].assoc(read_attribute(attribute))

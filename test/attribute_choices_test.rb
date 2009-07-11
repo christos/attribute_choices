@@ -47,6 +47,24 @@ class AttributeChoicesTest < ActiveSupport::TestCase
     assert_equal 'Male', @person.gender_display
   end
 
+  test "a localized version of the display value is returned when :localize => true" do
+    class Human < Person
+      attribute_choices :gender, [['m', 'Male'], ['f', 'Female']], :localize => true
+    end
+    @human = Human.new(:gender => 'm', :salutation => 'mr')
+
+    assert_equal I18n.translate('Male'), @human.gender_display
+  end
+
+  test "a localized version of the attribute choices is returned when :localize => true" do
+    class Human < Person
+      attribute_choices :gender, [['m', 'Male'], ['f', 'Female']], :localize => true
+    end
+    @human = Human.new(:gender => 'm', :salutation => 'mr')
+
+    assert_equal [[I18n.translate('Male'), 'm'], [I18n.translate('Female'), 'f']], Human.gender_choices
+  end
+
   test "nil is returned as the display value of an attribute without a value to display mapping" do
     @adult = Adult.new(:salutation => 'master')
     assert_nil @adult.salutation_display

@@ -25,23 +25,26 @@ Then try this in the console:
     => 'm'
     >> @john.gender_display
     => 'Male'
-    
+`    >> User.gender_choices
+    => [["Male", 'm'], ['Female', 'f']]
+
     >> @john.valid?
     => true
     >> @john.gender = 'o'
     >> @john.valid?
     => false
+
+    => I18n.locale = :es
+    >> @john.gender_display
+    => "translation missing: es, Male"
  
     >> @john.age_group_display
     => '18 to 24 years old'
-    >> User.gender_choices
-    => [["Male", 'm'], ['Female', 'f']]
     >> User.age_group_choices
     => [['18-24', '18 to 24 years old], ['25-45', '25 to 45 years old']]
     
 = ToDo
 
-* I18n for attribute_display and attribute_choices
 * Validate absence of _display and _choices methods
 * Consider the usefulness of _choices= method
 
