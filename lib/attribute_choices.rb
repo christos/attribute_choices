@@ -18,7 +18,7 @@ module AttributeChoices
     #   * <tt>:localize</tt> - If set to +true+, then <tt>I18n.trasnlate</tt> is used to translate the value \
     #                          returned by the +_display+ instance methods as well as translate the display \
     #                          values returned by the +_choices+ class method
-    #   * <tt>:validate</tt> - If set to +true+, +validates_presence_of+ is used to ensure that the attribute \
+    #   * <tt>:validate</tt> - If set to +true+, +validates_inclusion_of+ is used to ensure that the attribute \
     #                          only accepts the values passed in with the +choices+
     #
     # For example:
