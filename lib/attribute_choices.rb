@@ -68,10 +68,8 @@ module AttributeChoices
         tupple && tupple.last
       end
 
-      self.class.instance_eval do
-        define_method("#{attribute.to_s}_choices") do
-          attribute_choices_storage[attribute].collect(&:reverse)
-        end
+      (class << self; self; end).send(:define_method, "#{attribute.to_s}_choices") do
+        attribute_choices_storage[attribute].collect(&:reverse)
       end
 
       if column_names.include?(attribute.to_s) && options[:validate]

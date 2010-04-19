@@ -1,5 +1,5 @@
 require 'test_helper'
-
+require 'ruby-debug'
 
 class AttributeChoicesTest < ActiveSupport::TestCase
 
@@ -20,6 +20,16 @@ class AttributeChoicesTest < ActiveSupport::TestCase
     assert_respond_to(Person, :attribute_choices)
   end
 
+  test "It should add a class and an instance method for each attribute" do
+    assert_respond_to(Person, :gender_choices)
+    assert_respond_to(Person.new, :gender_display)
+    
+    assert_raise(NoMethodError) do
+       Object.gender_choices
+    end
+    
+  end
+  
   test "A child AR object should not share the parent's choices" do
     assert_not_equal Adult.gender_choices, Person.gender_choices
   end
