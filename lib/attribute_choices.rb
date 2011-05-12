@@ -1,3 +1,5 @@
+require 'active_record'
+
 module AttributeChoices
   def self.included(base) #:nodoc:
     base.extend(AttributeChoicesMacro)
@@ -43,38 +45,38 @@ module AttributeChoices
 
       assert_valid_attribute(attribute.to_s)
 
-      write_inheritable_hash :attribute_choices_storage, {}
-      class_inheritable_reader :attribute_choices_storage
-
-      write_inheritable_hash :attribute_choices_options,  {}
-      class_inheritable_reader :attribute_choices_options
-
       attribute = attribute.to_sym
 
       options = args.extract_options!
       options.reverse_merge!(:validate => false, :localize => false)
       options.assert_valid_keys(:validate, :localize)
-      attribute_choices_options[attribute.to_sym] = options
+      
+      attribute_choices_options[attribute] = options
 
-      if options[:localize]
-        attribute_choices_storage[attribute] = choices.to_a.collect {|t| [t.first, I18n.translate(t.last)]}
+      choices = if options[:localize]
+        choices.to_a.collect {|t| [t.first, I18n.translate(t.last)]}
       else
-        attribute_choices_storage[attribute] = choices.to_a
+        choices.to_a
       end
 
       define_method("#{attribute.to_s}_display") do
-        tupple = attribute_choices_storage[attribute].assoc(read_attribute(attribute))
+        # The local variable `choices` is saved inside this Proc
+        tupple = choices.assoc(read_attribute(attribute))
         tupple && tupple.last
       end
 
       (class << self; self; end).send(:define_method, "#{attribute.to_s}_choices") do
-        attribute_choices_storage[attribute].collect(&:reverse)
+        choices.collect(&:reverse)
       end
 
-      if column_names.include?(attribute.to_s) && options[:validate]
-        validates_inclusion_of attribute.to_sym, :in => attribute_choices_storage[attribute].collect {|i| i.first}
+      if options[:validate]
+        validates_inclusion_of attribute.to_sym, :in => choices.collect {|i| i.first}
       end
 
+    end
+    
+    def attribute_choices_options
+      @attribute_choices_options ||= {}
     end
 
     private
