@@ -1,4 +1,3 @@
-
 module AttributeChoices
   def self.included(base) #:nodoc:
     base.extend(AttributeChoicesMacro)
@@ -86,3 +85,6 @@ module AttributeChoices
     end
   end
 end
+
+ActiveRecord::Base.send(:include, AttributeChoices) 
+

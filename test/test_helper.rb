@@ -1,5 +1,5 @@
 ENV["RAILS_ENV"] = "test"
-$:.unshift(File.dirname(__FILE__) + '/../lib/forty_two')
+
 require 'rubygems'
 
 require 'test/unit'
@@ -11,7 +11,6 @@ require 'active_record'
 require 'active_record/fixtures'
 
 require 'attribute_choices'
-require File.dirname(__FILE__) + '/../init.rb'
 
 config = YAML::load(IO.read(File.dirname(__FILE__) + '/database.yml'))
 ActiveRecord::Base.logger = Logger.new(File.dirname(__FILE__) + "/debug.log")
