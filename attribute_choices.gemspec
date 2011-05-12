@@ -1,8 +1,6 @@
-# -*- encoding: utf-8 -*-
-
 Gem::Specification.new do |s|
   s.name = "attribute_choices"
-  s.version = "1.0.0"
+  s.version = "1.0.1"
 
   s.authors = ["Christos Zisopoulos"]
   s.date = "2011-05-12"
