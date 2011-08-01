@@ -61,7 +61,7 @@ module AttributeChoices
 
       define_method("#{attribute.to_s}_display") do
         # The local variable `choices` is saved inside this Proc
-        tupple = choices.assoc(read_attribute(attribute))
+        tupple = choices.assoc(send(attribute))
         tupple && tupple.last
       end
 
@@ -81,7 +81,7 @@ module AttributeChoices
 
     private
     def assert_valid_attribute(attr_name)
-      unless column_names.include?(attr_name.to_s)
+      unless column_names.include?(attr_name.to_s) || (instance_methods.include?(attr_name) && instance_methods.include?("#{attr_name}="))
         raise ArgumentError, "Model attribute '#{attr_name.to_s}' doesn't exist" 
       end
     end
