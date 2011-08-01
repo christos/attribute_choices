@@ -41,6 +41,19 @@ class AttributeChoicesTest < ActiveSupport::TestCase
     end
   end
 
+  test "Allow specifying virtual attributes" do
+    assert_nothing_raised do
+      class Person < ActiveRecord::Base
+        attr_accessor :virtual_attribute
+        attribute_choices :virtual_attribute, {'w' => 'Wadus'}
+      end
+    end
+    
+    @person = Person.new(:virtual_attribute => 'w')
+    
+    assert_equal('Wadus', @person.virtual_attribute_display)
+  end
+
   test "Does not allow invalid option keys" do
     assert_raise ArgumentError do
       class Person < ActiveRecord::Base
