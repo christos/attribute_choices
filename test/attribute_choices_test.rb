@@ -114,7 +114,7 @@ class AttributeChoicesTest < ActiveSupport::TestCase
     class Person < ActiveRecord::Base
       attribute_choices :gender, {'m' => 'Male', 'f' => 'Female'}, :localize => true, :validate => false
     end
-    assert_equal Hash[:localize, true, :validate, false], Person.attribute_choices_options[:gender]
+    assert_equal Hash[:localize, true, :validate, false, :i18n, false], Person.attribute_choices_options[:gender]
   end
 
   test "Default values are assigned for any options that are not specified" do
@@ -122,7 +122,7 @@ class AttributeChoicesTest < ActiveSupport::TestCase
       attribute_choices :gender, {'m' => 'Male', 'f' => 'Female'}, :localize => true
     end
 
-    assert_equal Hash[:localize, true, :validate, false], Person.attribute_choices_options[:gender]
+    assert_equal Hash[:localize, true, :validate, false, :i18n, false], Person.attribute_choices_options[:gender]
   end
 
   test "Doesn't validate inclusion of attribute value in choices values by default" do

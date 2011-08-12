@@ -68,14 +68,13 @@ module AttributeChoices
       end
       
       choices = if args.size.zero?
-        if options[:i18n]
+        if options[:i18n] == true
           nspace = unless self.name.to_s.index('::').nil?
             "activerecord.humanized_attribute_values.#{self.name.to_s.underscore.gsub(/\//, '.')}.#{attribute.to_s}"
           else
             "activerecord.humanized_attribute_values.#{self.name.downcase}.#{attribute.to_s}"
           end
-
-          probe  = I18n.translate(nspace).to_a
+          probe = I18n.translate(nspace).to_a
           if probe.first.is_a?(String)
             raise ArgumentError, "Cannot find choices for attribute #{attribute} in translations, namespace #{nspace}"
           else
@@ -83,8 +82,7 @@ module AttributeChoices
           end
         end
       else
-        case true
-        when args.first.is_a?(Hash) || args.first.is_a?(Array)
+        if args.first.is_a?(Hash) || args.first.is_a?(Array)
           args.first
         else
           raise ArgumentError, "Choices must be either an Array or Hash"
