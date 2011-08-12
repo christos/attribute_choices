@@ -64,7 +64,7 @@ module AttributeChoices
         args.push(options) # back to args
         Hash[:localize, false, :validate, false, :i18n, false]
       else
-        options.reverse_merge(:validate => false, :localize => false)
+        options.reverse_merge(:validate => false, :localize => false, :i18n => false)
       end
       
       choices = if args.size.zero?
