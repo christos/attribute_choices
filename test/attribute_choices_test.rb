@@ -54,16 +54,19 @@ class AttributeChoicesTest < ActiveSupport::TestCase
     assert_equal('Wadus', @person.virtual_attribute_display)
   end
 
-  test "Does not allow invalid option keys" do
-    assert_raise ArgumentError do
-      class Person < ActiveRecord::Base
-        attribute_choices :gender, {'m' => 'Male', 'f' => 'Female'}, :not_a_real_option => true
-      end
-    end
-  end
+  # Commented out since we ignore all the invalid option keys
+  #
+  # test "Does not allow invalid option keys" do
+  #   assert_raise ArgumentError do
+  #     class Person < ActiveRecord::Base
+  #       attribute_choices :gender, {'m' => 'Male', 'f' => 'Female'}, :not_a_real_option => true
+  #     end
+  #   end
+  # end
 
   test "given a valid value for an attribute the correct display value is returned " do
     @person = Person.new(:gender => 'm', :salutation => 'mr')
+    
     assert @person.valid?
 
     assert_equal 'Male', @person.gender_display
@@ -139,4 +142,13 @@ class AttributeChoicesTest < ActiveSupport::TestCase
     assert !@person.valid?
   end
 
+  test "It should retrieve choices from I18n when no choices specified and :i18n => true" do
+    class Person < ActiveRecord::Base
+      attribute_choices :gender, :validate => true, :i18n => true
+    end
+    
+    @person = Person.new(:gender => 'm')
+    assert @person.valid?
+    assert_equal [["Female", "f"], ["Male", "m"]], Person.gender_choices
+  end
 end
