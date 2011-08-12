@@ -10,8 +10,6 @@ require 'test/unit'
 require 'active_support/test_case'
 require 'active_record/fixtures'
 
-#raise Dir[File.dirname(__FILE__) + "/en.yml"].inspect
-
 I18n.load_path += Dir[File.dirname(__FILE__) + "/en.yml"]
 I18n.default_locale = :en
 
