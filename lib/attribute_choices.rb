@@ -22,6 +22,9 @@ module AttributeChoices
     #                          values returned by the +_choices+ class method
     #   * <tt>:validate</tt> - If set to +true+, +validates_inclusion_of+ is used to ensure that the attribute \
     #                          only accepts the values passed in with the +choices+
+    #   * <tt>:i18n</tt> - If set to +true+, then <tt>I18n</tt> used to load choices from translations. In that \
+    #                      case no +choices+ needs to be specified
+    #                      
     #
     # For example:
     #   class User < ActiveRecord::Base
@@ -30,6 +33,11 @@ module AttributeChoices
     #       ['18-24', '18 to 24 years old], 
     #       ['25-45', '25 to 45 years old']
     #     ], :localize => true, :validate => false
+    #   end
+    #
+    # With I18n:
+    #   class User < ActiveRecord::Base
+    #     attribute_choices :gender, :i18n => true, :validate => true
     #   end
     #
     # The macro adds an instance method named after the attribute, suffixed with <tt>_display</tt>
@@ -42,15 +50,45 @@ module AttributeChoices
     #
     # NOTE: You can use a Hash for the +choices+ argument which is converted to an Array. The order of the \
     # tupples of the resulting Array is only guaranteed to be preserved if you are using Ruby 1.9
-    def attribute_choices(attribute, choices, *args)
+    def attribute_choices(attribute, *args)
 
       assert_valid_attribute(attribute.to_s)
 
       attribute = attribute.to_sym
 
-      options = args.extract_options!
-      options.reverse_merge!(:validate => false, :localize => false)
-      options.assert_valid_keys(:validate, :localize)
+      options   = args.extract_options!
+      test_opts = options.reverse_merge(:validate => false, :localize => false, :i18n => false)
+
+      options = begin
+        test_opts.assert_valid_keys(:validate, :localize, :i18n)
+      rescue
+        args.push(options) # back to args
+        Hash[:localize, false, :validate, false, :i18n, false]
+      else
+        options.reverse_merge(:validate => false, :localize => false, :i18n => false)
+      end
+      
+      choices = if args.size.zero?
+        if options[:i18n] == true
+          nspace = unless self.name.to_s.index('::').nil?
+            "activerecord.humanized_attribute_values.#{self.name.to_s.underscore.gsub(/\//, '.')}.#{attribute.to_s}"
+          else
+            "activerecord.humanized_attribute_values.#{self.name.downcase}.#{attribute.to_s}"
+          end
+          probe = I18n.translate(nspace).to_a
+          if probe.first.is_a?(String)
+            raise ArgumentError, "Cannot find choices for attribute #{attribute} in translations, namespace #{nspace}"
+          else
+            probe.collect{|p| [p.first.to_s, p.last]}
+          end
+        end
+      else
+        if args.first.is_a?(Hash) || args.first.is_a?(Array)
+          args.first
+        else
+          raise ArgumentError, "Choices must be either an Array or Hash"
+        end
+      end
       
       attribute_choices_options[attribute] = options
 
@@ -99,4 +137,3 @@ module AttributeChoices
 end
 
 ActiveRecord::Base.send(:include, AttributeChoices) 
-

@@ -1,0 +1,9 @@
+en:
+  activerecord:
+    humanized_attribute_values:
+      attribute_choices_test:
+        person:
+          gender:
+            m: "Male"
+            f: "Female"
+        
