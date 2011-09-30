@@ -1,9 +1,6 @@
 require 'rake'
 require 'rake/testtask'
-require 'rake/rdoctask'
-require 'bundler'
-
-Bundler::GemHelper.install_tasks
+require "bundler/gem_tasks"
 
 desc 'Default: run unit tests.'
 task :default => :test
@@ -16,11 +13,3 @@ Rake::TestTask.new(:test) do |t|
   t.verbose = true
 end
 
-desc 'Generate documentation for the attribute_choices plugin.'
-Rake::RDocTask.new(:rdoc) do |rdoc|
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'AttributeChoices'
-  rdoc.options << '--line-numbers' << '--inline-source'
-  rdoc.rdoc_files.include('README.rdoc')
-  rdoc.rdoc_files.include('lib/**/*.rb')
-end
