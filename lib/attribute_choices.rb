@@ -7,7 +7,8 @@ module AttributeChoices
 
   module AttributeChoicesMacro
 
-    # Associate a list of display values for an attribute with a list of discreet values
+    # Extends ActiveRecord attributes with a `:choices` pseudo-type that provides convenient methods for mapping
+    # each choice to its human readable form.
     #
     # The arguments are:
     #
@@ -74,7 +75,8 @@ module AttributeChoices
       end
 
     end
-    
+
+    #:nodoc:
     def attribute_choices_options
       @attribute_choices_options ||= {}
     end
